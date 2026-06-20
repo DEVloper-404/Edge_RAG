@@ -1,0 +1,54 @@
+# ====================================================================
+# 1. Build Outputs, Libraries, & Generated Artifacts
+# ====================================================================
+build/
+build*/
+out/
+tmp/
+*.o
+*.a
+*.so
+*.so.*
+*.dll
+*.exe
+*.dylib
+
+# ====================================================================
+# 2. Large Machine Learning Models & Vector Databases
+# ====================================================================
+# Never commit heavy model binaries or database files to Git
+*.gguf
+*.bin
+*.onnx
+*.ort
+*.db
+*.sqlite
+*.log
+models/
+
+# ====================================================================
+# 3. Python Virtual Environments & Caches (for Model Converters/Scripts)
+# ====================================================================
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+
+# ====================================================================
+# 4. Code Editor & IDE Configurations
+# ====================================================================
+.vscode/
+.idea/
+*.code-workspace
+.vs/
+.cache/
+CMakeUserPresets.json
+
+# ====================================================================
+# 5. Operating System System Files
+# ====================================================================
+.DS_Store
+Thumbs.db

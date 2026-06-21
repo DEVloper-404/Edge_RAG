@@ -12,9 +12,7 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang
     add_compile_options(
         -O3             # Aggressive optimizations for maximum speed
         -march=native   # Optimizes for your specific Pentium instruction set (SSE)
-        -ffast-math     # Drastically speeds up vector math for embeddings
-	-fno-finite-math-only # 👈 ADD THIS LINE TO FIX THE LLAMA.CPP ERROR
-	-Wall           # Show all standard warnings
+        -Wall           # Show all standard warnings
         -Wextra         # Show extra warnings
     )
 endif()
@@ -63,9 +61,10 @@ find_library(ONNXRUNTIME_LIB
 # Add your source files here. (If you only have main.cpp right now, remove the others)
 add_executable(${PROJECT_NAME}
     src/main.cpp
+    src/rag_engine.cpp
+    src/inference.cpp
+    src/llm_engine.cpp
     # src/ui.cpp         # Uncomment when you create these files
-    # src/rag_engine.cpp # Uncomment when you create these files
-    # src/inference.cpp  # Uncomment when you create these files
 )
 
 # Tell the compiler where your header files are

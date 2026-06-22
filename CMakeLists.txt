@@ -64,7 +64,7 @@ add_executable(${PROJECT_NAME}
     src/rag_engine.cpp
     src/inference.cpp
     src/llm_engine.cpp
-    # src/ui.cpp         # Uncomment when you create these files
+    src/ui.cpp
 )
 
 # Tell the compiler where your header files are

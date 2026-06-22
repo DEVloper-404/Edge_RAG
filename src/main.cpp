@@ -2,6 +2,7 @@
 #include "rag_engine.hpp"
 #include "inference.hpp"
 #include "llm_engine.hpp"
+#include "ui.hpp"
 
 int main() {
     std::cout << "=== Loading Local Edge RAG Pipeline (Auto-Scan & Cache) ===" << std::endl;
@@ -16,36 +17,12 @@ int main() {
     std::cout << "Total chunks loaded in vector database: " << database.size() << "\n" << std::endl;
 
     if (database.empty()) {
-        std::cout << "Error: No markdown files found in the current directory!" << std::endl;
+        std::cout << "Error: No markdown files found in the 'Source files' directory!" << std::endl;
         return 0;
     }
 
-    // 3. User Input
-    std::string userQuery = "tell me my project rating and how these good as undergrad project?";
-    std::cout << "User: " << userQuery << std::endl;
-
-    // 4. Search for Context
-    std::vector<float> queryVector = embedder.getEmbedding(userQuery);
-    std::vector<DocumentChunk> topMatches = RagEngine::searchTopK(queryVector, database, 5);
-
-    std::cout << "\n--- TOP MATCHES ---" << std::endl;
-    for (size_t i = 0; i < topMatches.size(); ++i) {
-        std::cout << "Rank [" << i + 1 << "] Score: " << topMatches[i].score 
-                  << " | Context: " << topMatches[i].contextHeader << std::endl;
-        std::cout << "Excerpt: " << topMatches[i].text.substr(0, 150) << "...\n" << std::endl;
-    }
-
-    if (topMatches.empty()) {
-        std::cout << "No relevant documents found to answer the question." << std::endl;
-        return 0;
-    }
-
-    // 5. Generate the Final Answer
-    std::string retrievedContext = topMatches[0].text;
-    std::cout << "\n[Retrieved Best Context from " << topMatches[0].contextHeader << "]" << std::endl;
-    
-    // Pass the retrieved chunk and the user's question to Qwen3
-    llm.generateAnswer(retrievedContext, userQuery);
+    // 3. Launch the Terminal UI!
+    ChatUI::start(embedder, database, llm);
 
     return 0;
 }

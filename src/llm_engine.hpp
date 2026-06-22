@@ -13,6 +13,6 @@ public:
     LlmEngine(const std::string& model_path);
     ~LlmEngine();
 
-    // Takes the retrieved document context and the user's question, and prints the answer
-    void generateAnswer(const std::string& context, const std::string& question);
+    // Takes the retrieved document context and the user's question, and returns the answer as a string
+    std::string generateAnswer(const std::string& context, const std::string& question);
 };

@@ -33,15 +33,17 @@ LlmEngine::~LlmEngine() {
     llama_backend_free();
 }
 
-void LlmEngine::generateAnswer(const std::string& context, const std::string& question) {
-    bool in_thinking = false;
-    std::string token_buffer = "";
-
+std::string LlmEngine::generateAnswer(const std::string& context, const std::string& question) {
     // Get the vocabulary from the model (required by updated llama.cpp API)
     const struct llama_vocab* vocab = llama_model_get_vocab(model);
     if (!vocab) {
-        std::cerr << "Error: Could not retrieve vocabulary from model." << std::endl;
-        return;
+        return "Error: Could not retrieve vocabulary from model.";
+    }
+
+    // Clear the KV cache/memory to start fresh for each new prompt
+    llama_memory_t mem = llama_get_memory(ctx);
+    if (mem) {
+        llama_memory_clear(mem, true);
     }
 
     // 1. Format the prompt specifically for Qwen Instruct models.
@@ -57,8 +59,7 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
     std::vector<llama_token> tokens_list(prompt.size() + 2); // Buffer size
     int n_tokens = llama_tokenize(vocab, prompt.c_str(), prompt.size(), tokens_list.data(), tokens_list.size(), true, true);
     if (n_tokens < 0) {
-        std::cerr << "Error: Prompt is too long for the tokenizer buffer." << std::endl;
-        return;
+        return "Error: Prompt is too long for the tokenizer buffer.";
     }
     tokens_list.resize(n_tokens);
 
@@ -74,9 +75,8 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
     }
 
     if (llama_decode(ctx, prompt_batch) != 0) {
-        std::cerr << "Error: Failed to decode prompt." << std::endl;
         llama_batch_free(prompt_batch);
-        return;
+        return "Error: Failed to decode prompt.";
     }
 
     // 4. The Generation Loop (Predicting the next word)
@@ -90,9 +90,10 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
     loop_batch.seq_id[0][0] = 0;
     loop_batch.logits[0] = 1; // Always get logits to predict next token
 
-    std::cout << "\n🤖 Qwen3 says:\n";
-
     bool is_first_iteration = true;
+    bool in_thinking = false;
+    std::string token_buffer = "";
+    std::string final_answer = "";
 
     while (n_cur < n_tokens + n_max) {
         // Get the probabilities for the next token.
@@ -116,8 +117,8 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
             break; 
         }
 
-        // Convert the token ID back into readable English text and print it instantly.
-        // Also includes a fallback streaming filter to skip printing any <think>...</think> block.
+        // Convert the token ID back into readable English text.
+        // Also includes a fallback streaming filter to skip saving any <think>...</think> block.
         char buf[128];
         int n_chars = llama_token_to_piece(vocab, new_token_id, buf, sizeof(buf), 0, false);
         if (n_chars > 0) {
@@ -138,18 +139,18 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
                 token_buffer = token_buffer.substr(think_end + 8);
             }
             
-            // Flush safe buffer content
+            // Flush safe buffer content into final_answer
             if (!in_thinking && !token_buffer.empty()) {
                 size_t pos_lt = token_buffer.find('<');
                 if (pos_lt == std::string::npos) {
-                    std::cout << token_buffer << std::flush;
+                    final_answer += token_buffer;
                     token_buffer.clear();
                 } else if (pos_lt > 0) {
-                    std::cout << token_buffer.substr(0, pos_lt) << std::flush;
+                    final_answer += token_buffer.substr(0, pos_lt);
                     token_buffer = token_buffer.substr(pos_lt);
                 }
                 if (token_buffer.size() > 15) { // Unmatched '<' fallback
-                    std::cout << token_buffer << std::flush;
+                    final_answer += token_buffer;
                     token_buffer.clear();
                 }
             }
@@ -171,5 +172,11 @@ void LlmEngine::generateAnswer(const std::string& context, const std::string& qu
     // Free the allocated batches memory
     llama_batch_free(prompt_batch);
     llama_batch_free(loop_batch);
-    std::cout << "\n" << std::endl;
+
+    // Make sure to append any residual unprinted buffer characters if we didn't end in thinking mode
+    if (!in_thinking && !token_buffer.empty()) {
+        final_answer += token_buffer;
+    }
+
+    return final_answer;
 }

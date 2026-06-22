@@ -1,3 +1,12 @@
+<pre>╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                          ███████╗██████╗  ██████╗ ███████╗    ██████╗  █████╗  ██████╗                         │
+│                          ██╔════╝██╔══██╗██╔════╝ ██╔════╝    ██╔══██╗██╔══██╗██╔════╝                         │
+│                          █████╗  ██║  ██║██║  ███╗█████╗      ██████╔╝███████║██║  ███╗                        │
+│                          ██╔══╝  ██║  ██║██║   ██║██╔══╝      ██╔══██╗██╔══██║██║   ██║                        │
+│                          ███████╗██████╔╝╚██████╔╝███████╗    ██║  ██║██║  ██║╚██████╔╝                        │
+│                          ╚══════╝╚═════╝  ╚═════╝ ╚══════╝    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝                         │
+│                                           ─── LOCAL EDGE RAG TUI ───                                           │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤</pre>
 # 🧠 Local Edge RAG Pipeline (Terminal UI)
 
 A lightweight, high-performance, and completely local Retrieval-Augmented Generation (RAG) pipeline designed for resource-constrained systems (like Intel Pentium or systems with 4GB RAM). It features an interactive Terminal User Interface (TUI) powered by **FTXUI**, local embeddings from **all-MiniLM-L6-v2 (ONNX)**, and text generation via **Qwen3 (GGUF)** running on a CPU-optimized **llama.cpp** engine.

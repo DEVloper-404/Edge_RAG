@@ -1,3 +1,12 @@
+<pre>╭────────────────────────────────────────────────────────────────────────────────────────────────────────────────╮
+│                          ███████╗██████╗  ██████╗ ███████╗    ██████╗  █████╗  ██████╗                         │
+│                          ██╔════╝██╔══██╗██╔════╝ ██╔════╝    ██╔══██╗██╔══██╗██╔════╝                         │
+│                          █████╗  ██║  ██║██║  ███╗█████╗      ██████╔╝███████║██║  ███╗                        │
+│                          ██╔══╝  ██║  ██║██║   ██║██╔══╝      ██╔══██╗██╔══██║██║   ██║                        │
+│                          ███████╗██████╔╝╚██████╔╝███████╗    ██║  ██║██║  ██║╚██████╔╝                        │
+│                          ╚══════╝╚═════╝  ╚═════╝ ╚══════╝    ╚═╝  ╚═╝╚═╝  ╚═╝ ╚═════╝                         │
+│                                           ─── LOCAL EDGE RAG TUI ───                                           │
+├────────────────────────────────────────────────────────────────────────────────────────────────────────────────┤</pre>
 # 🧠 Local Edge RAG Pipeline (Terminal UI)
 
 A lightweight, high-performance, and completely local Retrieval-Augmented Generation (RAG) pipeline designed for resource-constrained systems (like Intel Pentium or systems with 4GB RAM). It features an interactive Terminal User Interface (TUI) powered by **FTXUI**, local embeddings from **all-MiniLM-L6-v2 (ONNX)**, and text generation via **Qwen3 (GGUF)** running on a CPU-optimized **llama.cpp** engine.
@@ -34,7 +43,7 @@ Follow these steps to build and run the RAG pipeline on your machine:
 
 ### 1. Clone the Repository
 ```bash
-git clone <your-repository-url>
+git clone https://github.com/DEVloper-404/Edge_RAG
 cd my_edge_rag
 ```
 
@@ -46,7 +55,7 @@ Since the model binary files are large (~1.2GB total) and ignored by Git, use th
 pip install -r requirements.txt
 
 # 2. Run the model setup script
-python download_models.py
+python3 download_models.py
 ```
 This script will automatically download and place:
 * `all-minilm-l6-v2.onnx` into `models/`
@@ -103,31 +112,6 @@ my_edge_rag/
 │   ├── inference.cpp / .hpp    # ONNX Runtime Embeddings Wrapper
 │   └── rag_engine.cpp / .hpp   # Chunking, Vector Store, & Cosine Similarity
 └── third_party/                # Vendor-managed local dependencies (llama.cpp, ONNX Runtime)
-```
-
----
-
-## 📦 How to Deploy/Push to GitHub
-
-If you want to push this repository to your own GitHub profile, run the following commands:
-
-```bash
-# 1. Stage the files (including forcing the ONNX shared library)
-git add .
-git add -f third_party/onnxruntime/lib/libonnxruntime.so
-git add -f third_party/onnxruntime/lib/libonnxruntime.so.1.17.1
-
-# 2. Commit the changes
-git commit -m "feat: Add interactive FTXUI terminal interface, requirements.txt, and download_models.py"
-
-# 3. Rename the branch to main (if not done already)
-git branch -M main
-
-# 4. Link your remote GitHub repository
-git remote add origin <YOUR_GITHUB_REPO_URL>
-
-# 5. Push to GitHub
-git push -u origin main
 ```
 
 ---

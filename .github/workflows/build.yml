@@ -34,3 +34,7 @@ jobs:
       run: |
         cd build
         make -j$(nproc)
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+          submodules: recursive
